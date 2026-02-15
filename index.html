@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>서프라이즈 이벤트</title>
+<title>서프라이즈 이벤트 </title>
 
 <style>
 * { box-sizing: border-box; }
@@ -39,7 +40,7 @@ body{
   text-align:center;
   box-shadow:0 15px 40px rgba(0,0,0,.25);
   position:relative;
-  z-index:10; /* ✅ 클릭 안 막히게 */
+  z-index:10;
 }
 
 h1{
@@ -48,17 +49,17 @@ h1{
   margin:0 0 24px;
 }
 
+/* 버튼 영역: Yes 버튼이 이 안에서만 도망가도록 높이를 좀 더 주었습니다 */
 .btn-container{
   position:relative;
   width:280px;
-  height:56px;
+  height:120px; 
   margin:0 auto;
-  touch-action: manipulation; /* ✅ 모바일 탭 반응 개선 */
+  touch-action: manipulation;
 }
 
 .btn{
   position:absolute;
-  top:0;
   width:120px;
   height:48px;
   border:none;
@@ -66,15 +67,15 @@ h1{
   font-size:16px;
   cursor:pointer;
   user-select:none;
-  z-index:20;            /* ✅ 클릭 안 막히게 */
-  pointer-events:auto;   /* ✅ 클릭 안 막히게 */
-  transition: transform .15s ease;
+  z-index:20;
+  transition: transform .15s ease, left .2s ease, top .2s ease; /* 위치 이동 부드럽게 */
 }
 
-.btn:active{ transform:scale(.98); }
+.btn:active{ transform:scale(.95); }
 
-.yes{ left:0; background:#ff4d6d; color:#fff; }
-.no { left:160px; background:#d6d6d6; color:#111; }
+/* 초기 위치 설정 */
+.yes{ left:0; top:0; background:#ff4d6d; color:#fff; }
+.no { left:160px; top:0; background:#d6d6d6; color:#111; }
 
 .result{
   margin-top:18px;
@@ -92,8 +93,8 @@ h1{
 }
 
 @keyframes float{
-  0%{ transform:translateY(0); opacity:1; }
-  100%{ transform:translateY(-300px); opacity:0; }
+  0%{ transform:translateY(0) scale(1); opacity:1; }
+  100%{ transform:translateY(-500px) scale(1.5); opacity:0; }
 }
 </style>
 </head>
@@ -101,8 +102,8 @@ h1{
 <body>
   <div class="card">
     <h1>
-      서프라이즈 이벤트!!<br>
-      아무거나 원하는거 하나 사줄까?
+      서프라이즈 이벤트<br>
+      원하는거 아무거나 하나 사줄까?
     </h1>
 
     <div class="btn-container" id="btnArea">
@@ -110,68 +111,70 @@ h1{
       <button class="btn no" id="noBtn" type="button">No</button>
     </div>
 
-    <div class="result" id="result">❤️ 응 뻥이야~(σ≧▽≦)σ ❤️</div>
+    <div class="result" id="result">❤️ 응 뻥이야~o(*⌒O⌒)ｂ ❤️</div>
   </div>
 
 <script>
 (function () {
-  const yesBtn = document.getElementById("yesBtn") || document.querySelector(".yes");
-  const noBtn  = document.getElementById("noBtn")  || document.querySelector(".no");
-  const btnArea = document.getElementById("btnArea") || document.querySelector(".btn-container");
+  const yesBtn = document.getElementById("yesBtn");
+  const noBtn  = document.getElementById("noBtn");
+  const btnArea = document.getElementById("btnArea");
   const result = document.getElementById("result");
 
-  if (!yesBtn || !noBtn || !btnArea) {
-    // 요소가 없으면(복붙 실수) 그냥 종료
-    return;
-  }
-
-  yesBtn.addEventListener("click", () => {
+  // 1. No 버튼을 누르면 "데이트 확정!" (반전)
+  noBtn.addEventListener("click", () => {
     document.body.style.backgroundImage =
       'linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("02.jpg")';
     if (result) result.style.display = "block";
     createHearts();
+    
+    // 성공 시 Yes 버튼은 더 이상 도망가지 않게 숨김 처리
+    yesBtn.style.display = "none";
   });
 
-  function createHearts(){
-    for(let i=0;i<20;i++){
-      const h=document.createElement("div");
-      h.className="heart";
-      h.textContent="❤️";
-      h.style.left = (Math.random()*window.innerWidth) + "px";
-      h.style.top  = window.innerHeight + "px";
-      document.body.appendChild(h);
-      setTimeout(()=>h.remove(), 2800);
-    }
-  }
-
+  // 2. Yes 버튼이 도망가는 함수
   function moveYes(){
     const w = yesBtn.offsetWidth || 120;
     const h = yesBtn.offsetHeight || 48;
+    
+    // 부모 컨테이너(btnArea) 안에서 랜덤 위치 계산
     const maxX = btnArea.clientWidth - w;
     const maxY = btnArea.clientHeight - h;
 
-    const x = Math.max(0, Math.random()*maxX);
-    const y = Math.max(0, Math.random()*maxY);
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
 
     yesBtn.style.left = x + "px";
     yesBtn.style.top  = y + "px";
   }
 
-  // PC: 올리면 도망
+  // PC: 마우스만 올려도 도망
   yesBtn.addEventListener("mouseenter", moveYes);
 
-  // 모바일: 누르려는 순간 도망
+  // 모바일: 터치하려고 하면 도망
   yesBtn.addEventListener("touchstart", (e) => {
     e.preventDefault();
     moveYes();
   }, { passive:false });
 
-  // 클릭도 방지
+  // 혹시라도 클릭되면 (클릭 방지 및 도망)
   yesBtn.addEventListener("click", (e) => {
     e.preventDefault();
     moveYes();
   });
 
+  function createHearts(){
+    for(let i=0; i<25; i++){
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.textContent = "❤️";
+      h.style.left = (Math.random() * window.innerWidth) + "px";
+      h.style.top  = (window.innerHeight + 50) + "px";
+      h.style.fontSize = (Math.random() * 20 + 20) + "px";
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 2800);
+    }
+  }
 })();
 </script>
 </body>
