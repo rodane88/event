@@ -144,17 +144,17 @@ h1{
     }
   }
 
-  function moveNo(){
-    const w = noBtn.offsetWidth || 120;
-    const h = noBtn.offsetHeight || 48;
+  function moveYes(){
+    const w = yesBtn.offsetWidth || 120;
+    const h = yesBtn.offsetHeight || 48;
     const maxX = btnArea.clientWidth - w;
     const maxY = btnArea.clientHeight - h;
 
     const x = Math.max(0, Math.random()*maxX);
     const y = Math.max(0, Math.random()*maxY);
 
-    noBtn.style.left = x + "px";
-    noBtn.style.top  = y + "px";
+    yesBtn.style.left = x + "px";
+    yesBtn.style.top  = y + "px";
   }
 
   // PC: 올리면 도망
